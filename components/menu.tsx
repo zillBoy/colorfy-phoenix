@@ -1,8 +1,8 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 // React & Next Dependencies
 import React, { useState } from "react";
-import Image from "next/image";
 
 // External Dependencies
 import { Card, CardHeader, CardBody } from "@nextui-org/card";
@@ -17,7 +17,7 @@ type MenuProps = {
 };
 
 export const Menu = ({ className = "" }: MenuProps) => {
-  const [selectedMenu, setSelectedMenu] = useState(menuItems[0]);
+  const [selectedMenu, setSelectedMenu] = useState<MenuItemProps>(menuItems[0]);
 
   const menuItemClickHandler = (menuItem: MenuItemProps) => {
     setSelectedMenu(menuItem);
@@ -26,12 +26,9 @@ export const Menu = ({ className = "" }: MenuProps) => {
   return (
     <Card className={clsx(className, "rounded-none h-screen")}>
       <CardHeader className="p-7">
-        <Image
-          className="rounded-lg"
+        <img
+          className="object-cover rounded-lg w-14 h-14"
           src="/images/logo.jpg"
-          width={50}
-          height={50}
-          objectFit="cover"
           alt="logo"
         />
         <h1 className="ml-4 text-2xl font-semibold">Phoenix</h1>
@@ -41,12 +38,8 @@ export const Menu = ({ className = "" }: MenuProps) => {
         {menuItems.map((item) => (
           <Button
             key={item.id}
-            className={clsx(
-              selectedMenu.name === item.name
-                ? "bg-gray-700"
-                : "bg-transparent",
-              "justify-start p-6 mb-3"
-            )}
+            className="justify-start p-6 mb-3"
+            variant={selectedMenu.name === item.name ? "flat" : "light"}
             startContent={<item.Icon size={14} />}
             onClick={() => menuItemClickHandler(item)}
           >

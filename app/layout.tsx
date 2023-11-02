@@ -46,7 +46,7 @@ export default function RootLayout({
         <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
           <div className="relative flex h-screen">
             <Menu className="min-w-1/5" />
-            <main>{children}</main>
+            <main className="w-4/5">{children}</main>
           </div>
         </Providers>
       </body>
