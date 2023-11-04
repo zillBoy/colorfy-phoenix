@@ -8,6 +8,7 @@ import { Card } from "@nextui-org/card";
 import { CreditCard as CreditCardIcon } from "react-feather";
 import { useTheme } from "next-themes";
 import { ResponsiveContainer, AreaChart, Area } from "recharts";
+import clsx from "clsx";
 
 const data = [
   {
@@ -74,11 +75,15 @@ const SVG_COLOR = {
   },
 };
 
-export const RevenueCard = () => {
+export type RevenueCardProps = {
+  className?: string;
+};
+
+export const RevenueCard = ({ className = "" }: RevenueCardProps) => {
   const { theme } = useTheme();
 
   return (
-    <Card className="p-3">
+    <Card className={clsx(className, "p-5")}>
       <div
         className="flex items-center justify-center w-8 h-8 mb-1 rounded-full"
         style={{
