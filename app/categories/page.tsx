@@ -18,20 +18,34 @@ import { Trash2 as TrashIcon, Edit3 as EditIcon } from "react-feather";
 
 // Internal Dependencies
 import Chip from "@/components/chip/Chip";
-import { CategoriesProps, CategoryStatusProps } from "@/types/categories";
+import { CategoryProps, CategoryStatusProps } from "@/types/categories";
+import { categoriesData } from "@/db/categories";
 
-const categoriesData: CategoriesProps = [
+type ColumnProp = {
+  key: string;
+  label: string;
+};
+
+const columns: ColumnProp[] = [
   {
-    id: 1,
-    name: "Animal",
-    position: 1,
-    status: "Published",
+    key: "id",
+    label: "ID",
   },
   {
-    id: 2,
-    name: "Plant",
-    position: 2,
-    status: "Inactive",
+    key: "name",
+    label: "NAME",
+  },
+  {
+    key: "position",
+    label: "POSITION",
+  },
+  {
+    key: "status",
+    label: "STATUS",
+  },
+  {
+    key: "action",
+    label: "ACTION",
   },
 ];
 
@@ -46,43 +60,57 @@ export default function Categories() {
     return "default";
   }, []);
 
+  const renderCell = React.useCallback(
+    (category: CategoryProps, columnKey: string) => {
+      const cellValue = category[columnKey];
+
+      switch (columnKey) {
+        case "status":
+          return (
+            <Chip
+              chipText={category.status}
+              color={getStatusColor(category.status)}
+              variant="flat"
+            />
+          );
+        case "action":
+          return (
+            <div className="flex gap-2 p-3">
+              <Tooltip color="success" content="Edit category">
+                <span className="text-lg cursor-pointer text-danger active:opacity-50">
+                  <EditIcon size={20} color="#6C6C75" />
+                </span>
+              </Tooltip>
+              <Tooltip color="danger" content="Delete category">
+                <span className="text-lg cursor-pointer text-danger active:opacity-50">
+                  <TrashIcon size={20} />
+                </span>
+              </Tooltip>
+            </div>
+          );
+        default:
+          return cellValue;
+      }
+    },
+    [getStatusColor]
+  );
+
   return (
     <div className="mx-auto my-2 w-98per">
       <Table aria-label="Categories" selectionMode="multiple">
-        <TableHeader>
-          <TableColumn>ID</TableColumn>
-          <TableColumn>NAME</TableColumn>
-          <TableColumn>POSITION</TableColumn>
-          <TableColumn>STATUS</TableColumn>
-          <TableColumn>ACTIONS</TableColumn>
+        <TableHeader columns={columns}>
+          {(column: ColumnProp) => (
+            <TableColumn key={column.key}>{column.label}</TableColumn>
+          )}
         </TableHeader>
-        <TableBody>
-          {categoriesData.map((category) => (
+        <TableBody emptyContent={"No rows to display."} items={categoriesData}>
+          {(category: CategoryProps) => (
             <TableRow key={category.id}>
-              <TableCell>{category.id}</TableCell>
-              <TableCell>{category.name}</TableCell>
-              <TableCell>{category.position}</TableCell>
-              <TableCell>
-                <Chip
-                  chipText={category.status}
-                  color={getStatusColor(category.status)}
-                  variant="flat"
-                />
-              </TableCell>
-              <TableCell className="flex gap-2 p-3">
-                <Tooltip color="success" content="Edit category">
-                  <span className="text-lg cursor-pointer text-danger active:opacity-50">
-                    <EditIcon size={20} color="#6C6C75" />
-                  </span>
-                </Tooltip>
-                <Tooltip color="danger" content="Delete category">
-                  <span className="text-lg cursor-pointer text-danger active:opacity-50">
-                    <TrashIcon size={20} />
-                  </span>
-                </Tooltip>
-              </TableCell>
+              {(columnKey: ColumnProp) => (
+                <TableCell>{renderCell(category, columnKey)}</TableCell>
+              )}
             </TableRow>
-          ))}
+          )}
         </TableBody>
       </Table>
     </div>
