@@ -26,6 +26,7 @@ export type ChipProps = {
     | "bordered"
     | "faded"
     | undefined;
+  raidus?: "full" | "lg" | "md" | "none" | "sm";
 };
 
 export const Chip = ({
@@ -33,10 +34,16 @@ export const Chip = ({
   text,
   variant = "solid",
   color = "default",
+  raidus = "md",
 }: ChipProps) => {
   return (
     <div className="flex gap-2">
-      <NChip color={color} variant={variant} radius="md" className="font-bold">
+      <NChip
+        color={color}
+        variant={variant}
+        radius={raidus}
+        className="font-bold"
+      >
         {chipText}
       </NChip>
       {text && <p>{text}</p>}

@@ -25,6 +25,7 @@ import {
   Edit3 as EditIcon,
   Search as SearchIcon,
   ChevronDown as ChevronDownIcon,
+  Plus as PlusIcon,
 } from "react-feather";
 
 // Internal Dependencies
@@ -69,7 +70,9 @@ const statusOptions = [
 
 export default function Categories() {
   const [filterValue, setFilterValue] = useState("");
-  const [visibleColumns, setVisibleColumns] = useState(new Set([]));
+  const [visibleColumns, setVisibleColumns] = useState(
+    new Set(INITIAL_VISIBLE_COLUMNS)
+  );
   const [statusFilter, setStatusFilter] = useState("all");
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(1);
@@ -146,6 +149,7 @@ export default function Categories() {
               chipText={category.status}
               color={getStatusColor(category.status)}
               variant="flat"
+              raidus="full"
             />
           );
         case "actions":
@@ -195,6 +199,7 @@ export default function Categories() {
             value={filterValue}
             onClear={() => onClear()}
             onValueChange={onSearchChange}
+            placeholder="Search by name..."
           />
           <div className="flex gap-3">
             <Dropdown>
@@ -218,11 +223,37 @@ export default function Categories() {
                 ))}
               </DropdownMenu>
             </Dropdown>
+
+            <Dropdown>
+              <DropdownTrigger className="hidden sm:flex">
+                <Button endContent={<ChevronDownIcon className="text-small" />}>
+                  Columns
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                disallowEmptySelection
+                aria-label="Table Columns"
+                closeOnSelect={false}
+                selectedKeys={visibleColumns}
+                selectionMode="multiple"
+                onSelectionChange={setVisibleColumns}
+              >
+                {columns.map((column) => (
+                  <DropdownItem key={column.key} className="capitalize">
+                    {_.capitalize(column.label)}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+
+            <Button color="primary" endContent={<PlusIcon />}>
+              Add New
+            </Button>
           </div>
         </div>
       </div>
     );
-  }, [filterValue, statusFilter, onClear, onSearchChange]);
+  }, [filterValue, statusFilter, visibleColumns, onClear, onSearchChange]);
 
   return (
     <div className="mx-auto my-2 w-98per">
@@ -232,7 +263,7 @@ export default function Categories() {
         topContent={topContent}
         onSortChange={setSortDescriptor}
       >
-        <TableHeader columns={columns}>
+        <TableHeader columns={headerColumns}>
           {(column: ColumnProp) => (
             <TableColumn key={column.key}>{column.label}</TableColumn>
           )}
