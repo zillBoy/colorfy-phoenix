@@ -13,6 +13,9 @@ module.exports = {
       minWidth: {
         "1/5": "20%",
       },
+      width: {
+        "98per": "98%",
+      },
     },
   },
   darkMode: "class",
