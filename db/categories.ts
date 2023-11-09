@@ -44,4 +44,28 @@ export const categoriesData: CategoriesProps = [
     position: 7,
     status: "Published",
   },
+  {
+    id: 8,
+    name: "Summer",
+    position: 8,
+    status: "Published",
+  },
+  {
+    id: 9,
+    name: "Cars",
+    position: 9,
+    status: "Inactive",
+  },
+  {
+    id: 10,
+    name: "Books",
+    position: 10,
+    status: "Inactive",
+  },
+  {
+    id: 11,
+    name: "Stars",
+    position: 11,
+    status: "Published",
+  },
 ];

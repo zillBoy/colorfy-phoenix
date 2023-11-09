@@ -19,6 +19,7 @@ import {
   DropdownMenu,
   DropdownItem,
   Button,
+  Pagination,
 } from "@nextui-org/react";
 import {
   Trash2 as TrashIcon,
@@ -66,7 +67,7 @@ export const Table = ({
     new Set(initialVisibleColumns)
   );
   const [statusFilter, setStatusFilter] = useState("all");
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [page, setPage] = useState(1);
 
   const hasSearchFilter = Boolean(filterValue);
@@ -132,6 +133,28 @@ export const Table = ({
 
     return "default";
   }, []);
+
+  const pages = Math.ceil(filteredItems.length / rowsPerPage);
+
+  const onNextPage = React.useCallback(() => {
+    if (page < pages) {
+      setPage(page + 1);
+    }
+  }, [page, pages]);
+
+  const onPreviousPage = React.useCallback(() => {
+    if (page > 1) {
+      setPage(page - 1);
+    }
+  }, [page]);
+
+  const onRowsPerPageChange = React.useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setRowsPerPage(Number(e.target.value));
+      setPage(1);
+    },
+    []
+  );
 
   const renderCell = React.useCallback(
     (item: any, columnKey: any) => {
@@ -248,12 +271,52 @@ export const Table = ({
     onAdd,
   ]);
 
+  const bottomContent = React.useMemo(() => {
+    return (
+      <div className="flex items-center justify-between px-2 py-2">
+        <Pagination
+          isCompact
+          showControls
+          showShadow
+          color="primary"
+          page={page}
+          total={pages}
+          onChange={setPage}
+        />
+        <div className="hidden sm:flex w-[30%] justify-end gap-2">
+          <Button
+            isDisabled={pages === 1}
+            size="sm"
+            variant="flat"
+            onPress={onPreviousPage}
+          >
+            Previous
+          </Button>
+          <Button
+            isDisabled={pages === 1}
+            size="sm"
+            variant="flat"
+            onPress={onNextPage}
+          >
+            Next
+          </Button>
+        </div>
+      </div>
+    );
+  }, [page, pages, onNextPage, onPreviousPage]);
+
   return (
     <div className="mx-auto my-2 w-98per">
       <NTable
         aria-label="Categories"
         selectionMode="multiple"
         topContent={topContent}
+        bottomContent={bottomContent}
+        layout="auto"
+        isHeaderSticky
+        classNames={{
+          wrapper: "max-h-[98vh]",
+        }}
       >
         <TableHeader columns={headerColumns}>
           {(column: ColumnProp) => (
