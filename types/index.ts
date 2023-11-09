@@ -18,6 +18,11 @@ export type ModalSizeProp =
   | "5xl"
   | "full";
 
+export type ColumnProp = {
+  key: string;
+  label: string;
+};
+
 // DATABASE
 
 /**************************/
