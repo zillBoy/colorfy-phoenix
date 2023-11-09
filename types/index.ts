@@ -5,3 +5,30 @@ export type IconSvgProps = SVGProps<SVGSVGElement> & {
 };
 
 export type StatusProps = "Published" | "Inactive";
+
+export type ModalSizeProp =
+  | "xs"
+  | "sm"
+  | "md"
+  | "lg"
+  | "xl"
+  | "2xl"
+  | "3xl"
+  | "4xl"
+  | "5xl"
+  | "full";
+
+// DATABASE
+
+/**************************/
+/**       CATEGORY       **/
+/**************************/
+
+export type CategoryProps = {
+  id: string | number;
+  name: string;
+  position: number;
+  status: StatusProps;
+};
+
+export type CategoriesProps = CategoryProps[];

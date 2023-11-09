@@ -1,5 +1,5 @@
 // Internal Dependencies
-import { CategoriesProps } from "@/types/categories";
+import { CategoriesProps } from "@/types";
 
 export const categoriesData: CategoriesProps = [
   {

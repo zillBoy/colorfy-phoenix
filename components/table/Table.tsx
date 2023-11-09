@@ -42,6 +42,9 @@ export type TableProps = {
   columns: ColumnProp[];
   data: any;
   filterKey?: "name";
+  onAdd?: () => void;
+  onDelete: (item: any) => void;
+  onUpdate: (item: any) => void;
 };
 
 const statusOptions = [
@@ -54,6 +57,9 @@ export const Table = ({
   columns,
   data,
   filterKey = "name",
+  onAdd,
+  onDelete,
+  onUpdate,
 }: TableProps) => {
   const [filterValue, setFilterValue] = useState("");
   const [visibleColumns, setVisibleColumns] = useState<string | Set<string>>(
@@ -146,12 +152,16 @@ export const Table = ({
             <div className="flex gap-2 p-3">
               <Tooltip color="success" content="Edit category">
                 <span className="text-lg cursor-pointer text-danger active:opacity-50">
-                  <EditIcon size={20} color="#6C6C75" />
+                  <EditIcon
+                    size={20}
+                    color="#6C6C75"
+                    onClick={() => onUpdate(item)}
+                  />
                 </span>
               </Tooltip>
               <Tooltip color="danger" content="Delete category">
                 <span className="text-lg cursor-pointer text-danger active:opacity-50">
-                  <TrashIcon size={20} />
+                  <TrashIcon size={20} onClick={() => onDelete(item)} />
                 </span>
               </Tooltip>
             </div>
@@ -160,7 +170,7 @@ export const Table = ({
           return cellValue;
       }
     },
-    [getStatusColor]
+    [getStatusColor, onDelete, onUpdate]
   );
 
   const topContent = useMemo(() => {
@@ -221,7 +231,7 @@ export const Table = ({
               </DropdownMenu>
             </Dropdown>
 
-            <Button color="primary" endContent={<PlusIcon />}>
+            <Button color="primary" endContent={<PlusIcon />} onClick={onAdd}>
               Add New
             </Button>
           </div>
@@ -235,6 +245,7 @@ export const Table = ({
     visibleColumns,
     onClear,
     onSearchChange,
+    onAdd,
   ]);
 
   return (
