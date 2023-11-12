@@ -1,16 +1,21 @@
-// React Dependencies
+"use client";
+
+// React & Next Dependencies
 import { Metadata } from "next";
+import { usePathname } from "next/navigation";
 
 // External Dependencies
 import clsx from "clsx";
+import { Provider as ReduxProvider } from "react-redux";
 
 // Internal Dependencies
 import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
 import { Providers } from "./providers";
-import { Navbar } from "@/components/navbar";
-import "@/styles/globals.css";
 import { Menu } from "@/components/menu";
+import { menuItems } from "@/utils/constants";
+import { store } from "@/store";
+import "@/styles/globals.css";
 
 export const metadata: Metadata = {
   title: {
@@ -34,6 +39,11 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname().replace("/", "");
+  const currentMenu = menuItems.find(
+    (item) => item.name.toLowerCase() === pathname
+  );
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head />
@@ -43,12 +53,14 @@ export default function RootLayout({
           fontSans.variable
         )}
       >
-        <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
-          <div className="relative flex h-screen">
-            <Menu className="min-w-1/5" />
-            <main className="w-4/5">{children}</main>
-          </div>
-        </Providers>
+        <ReduxProvider store={store}>
+          <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
+            <div className="relative flex h-screen">
+              <Menu className="min-w-1/5" currentMenu={currentMenu} />
+              <main className="w-4/5">{children}</main>
+            </div>
+          </Providers>
+        </ReduxProvider>
       </body>
     </html>
   );

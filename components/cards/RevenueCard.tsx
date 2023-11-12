@@ -67,6 +67,8 @@ const data = [
   },
 ];
 
+type SVGColorType = "primary" | "light" | "dark";
+
 const SVG_COLOR = {
   success: {
     primary: "#28C76F",
@@ -82,12 +84,22 @@ export type RevenueCardProps = {
 export const RevenueCard = ({ className = "" }: RevenueCardProps) => {
   const { theme } = useTheme();
 
+  const getColor = (theme: string) => {
+    if (theme === "primary" || theme === "light" || theme === "dark") {
+      return theme;
+    } else {
+      return "primary";
+    }
+  };
+
   return (
     <Card className={clsx(className, "p-5")}>
       <div
         className="flex items-center justify-center w-8 h-8 mb-1 rounded-full"
         style={{
-          backgroundColor: theme ? SVG_COLOR["success"][theme] : "transparent",
+          backgroundColor: theme
+            ? SVG_COLOR["success"][getColor(theme)]
+            : "transparent",
         }}
       >
         <CreditCardIcon color={SVG_COLOR["success"]["primary"]} size={18} />
@@ -111,7 +123,7 @@ export const RevenueCard = ({ className = "" }: RevenueCardProps) => {
             type="monotone"
             dataKey="pv"
             stroke={SVG_COLOR["success"]["primary"]}
-            fill={SVG_COLOR["success"][theme]}
+            fill={SVG_COLOR["success"][getColor(theme!)]}
           />
         </AreaChart>
       </ResponsiveContainer>
