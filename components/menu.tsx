@@ -5,22 +5,28 @@
 import React, { useState } from "react";
 
 // External Dependencies
+import _ from "lodash";
 import { Card, CardHeader, CardBody } from "@nextui-org/card";
 import { Button } from "@nextui-org/button";
 import clsx from "clsx";
 
 // Internal Dependencies
 import { menuItems, MenuItemProps } from "@/utils/constants";
+import { useAppDispatch, useAppSelector } from "@/hooks/useReactRedux";
 
 type MenuProps = {
   className?: string;
+  currentMenu?: MenuItemProps;
 };
 
-export const Menu = ({ className = "" }: MenuProps) => {
-  const [selectedMenu, setSelectedMenu] = useState<MenuItemProps>(menuItems[0]);
+export const Menu = ({ className = "", currentMenu }: MenuProps) => {
+  const [selectedMenu, setSelectedMenu] = useState<MenuItemProps>(
+    !_.isEmpty(currentMenu) ? currentMenu : menuItems[0]
+  );
 
   const menuItemClickHandler = (menuItem: MenuItemProps) => {
     setSelectedMenu(menuItem);
+    window.location.href = menuItem.link;
   };
 
   return (

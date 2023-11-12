@@ -222,6 +222,7 @@ export const Table = ({
                 closeOnSelect={false}
                 selectedKeys={statusFilter}
                 selectionMode="multiple"
+                // @ts-ignore:next-line
                 onSelectionChange={setStatusFilter}
               >
                 {statusOptions.map((status) => (
