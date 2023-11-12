@@ -1,13 +1,15 @@
 "use client";
 
 // React Dependencies
-import React, { useMemo } from "react";
+import React, { useCallback } from "react";
 
 // Internal Dependencies
+import _ from "lodash";
 import { TableWithModal } from "@/components/table/TableWithModal";
 import { usersData } from "@/db/users";
-import { CategoryProps, ColumnProp } from "@/types";
+import { ColumnProp } from "@/types";
 import { convertColumnKeysIntoObject } from "@/utils/convert";
+import { UserProps } from "@nextui-org/react";
 
 const initialVisibleColumns = ["id", "name", "email", "actions"];
 const columns: ColumnProp[] = convertColumnKeysIntoObject(
@@ -15,7 +17,7 @@ const columns: ColumnProp[] = convertColumnKeysIntoObject(
 );
 
 export default function Users() {
-  const addUserContent = useMemo(() => {
+  const addUserContent = useCallback(() => {
     return (
       <div>
         <p>This is the ADD user modl!</p>
@@ -23,41 +25,42 @@ export default function Users() {
     );
   }, []);
 
-  const updateUserContent = useMemo(() => {
+  const updateUserContent = useCallback((user: UserProps) => {
     return (
       <div>
-        <p>This is the UPDATE user modal</p>
+        <p>This is the UPDATE user modal `{user.id}`</p>
       </div>
     );
   }, []);
 
-  const deleteUserContent = useMemo(() => {
-    return (
+  const deleteUserContent = useCallback(
+    (user: UserProps) => (
       <div>
-        <p>This is the delete user modal</p>
+        <p>Are you sure you want to delete user with ID `{user.id}`?</p>
       </div>
-    );
-  }, []);
+    ),
+    []
+  );
 
   const onAddUser = async () => {
     try {
-      console.log("onAddUser called!: ");
+      console.log("onAddUser called!");
     } catch (err) {
       console.log("Error in onAddUser: ", err);
     }
   };
 
-  const onUpdateUser = async () => {
+  const onUpdateUser = async (user: UserProps) => {
     try {
-      console.log("onUpdateUser called! ");
+      console.log("onUpdateUser: ", user);
     } catch (err) {
       console.log("Error in onUpdateUser: ", err);
     }
   };
 
-  const onDeleteUser = async () => {
+  const onDeleteUser = async (user: UserProps) => {
     try {
-      console.log("onDeleteIser is called!");
+      console.log("onDeleteUser: ", user);
     } catch (err) {
       console.log("Error in onDeleteUser: ", err);
     }

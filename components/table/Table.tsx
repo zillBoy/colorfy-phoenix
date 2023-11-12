@@ -197,7 +197,7 @@ export const Table = ({
           return cellValue;
       }
     },
-    [getStatusColor, onDelete, onUpdate]
+    [getStatusColor, title, onDelete, onUpdate]
   );
 
   const topContent = useMemo(() => {
@@ -275,6 +275,7 @@ export const Table = ({
     filterValue,
     statusFilter,
     visibleColumns,
+    showStatus,
     onClear,
     onSearchChange,
     onAdd,

@@ -1,7 +1,7 @@
 "use client";
 
 // React Dependencies
-import React, { useMemo } from "react";
+import React, { useCallback } from "react";
 
 // Internal Dependencies
 import { TableWithModal } from "@/components/table/TableWithModal";
@@ -15,7 +15,7 @@ const columns: ColumnProp[] = convertColumnKeysIntoObject(
 );
 
 export default function Categories() {
-  const addCategoryContent = useMemo(() => {
+  const addCategoryContent = useCallback(() => {
     return (
       <div>
         <p>This is the add category modal!</p>
@@ -23,7 +23,7 @@ export default function Categories() {
     );
   }, []);
 
-  const updateCategoryContent = useMemo(() => {
+  const updateCategoryContent = useCallback(() => {
     return (
       <div>
         <p>This is the UPDATE category modal!</p>
@@ -31,7 +31,7 @@ export default function Categories() {
     );
   }, []);
 
-  const deleteCategoryContent = useMemo(() => {
+  const deleteCategoryContent = useCallback(() => {
     return (
       <div>
         <p>Delete - Category</p>

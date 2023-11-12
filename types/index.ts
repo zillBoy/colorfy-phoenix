@@ -51,3 +51,6 @@ export type UserProps = {
 };
 
 export type UsersProps = UserProps[];
+
+export type ItemProps = CategoryProps | UserProps | any;
+export type ItemsProps = CategoriesProps | UsersProps | any;
