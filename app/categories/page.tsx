@@ -7,30 +7,12 @@ import React, { useMemo } from "react";
 import { TableWithModal } from "@/components/table/TableWithModal";
 import { categoriesData } from "@/db/categories";
 import { CategoryProps, ColumnProp } from "@/types";
+import { convertColumnKeysIntoObject } from "@/utils/convert";
 
 const initialVisibleColumns = ["id", "name", "position", "status", "actions"];
-const columns: ColumnProp[] = [
-  {
-    key: "id",
-    label: "ID",
-  },
-  {
-    key: "name",
-    label: "NAME",
-  },
-  {
-    key: "position",
-    label: "POSITION",
-  },
-  {
-    key: "status",
-    label: "STATUS",
-  },
-  {
-    key: "actions",
-    label: "ACTIONS",
-  },
-];
+const columns: ColumnProp[] = convertColumnKeysIntoObject(
+  initialVisibleColumns
+);
 
 export default function Categories() {
   const addCategoryContent = useMemo(() => {
@@ -93,6 +75,7 @@ export default function Categories() {
       onAdd={onAddCategory}
       onUpdate={onUpdateCategory}
       onDelete={onDeleteCategory}
+      showStatus
     />
   );
 }

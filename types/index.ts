@@ -37,3 +37,17 @@ export type CategoryProps = {
 };
 
 export type CategoriesProps = CategoryProps[];
+
+/**************************/
+/**         USER         **/
+/**************************/
+
+export type UserProps = {
+  id: string | number;
+  name: string;
+  email: string;
+  googleId?: string;
+  facebookId?: string;
+};
+
+export type UsersProps = UserProps[];

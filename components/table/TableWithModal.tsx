@@ -25,6 +25,7 @@ type TableWithModalProps = {
   modalAddContent: ReactNode;
   modalUpdateContent: ReactNode;
   modalDeleteContent: ReactNode;
+  showStatus?: boolean;
   onAdd: () => void;
   onUpdate: (item: CategoryProps | any) => void;
   onDelete: (item: CategoryProps | any) => void;
@@ -38,6 +39,7 @@ export const TableWithModal = ({
   modalAddContent,
   modalUpdateContent,
   modalDeleteContent,
+  showStatus = false,
   onAdd,
   onUpdate,
   onDelete,
@@ -96,6 +98,8 @@ export const TableWithModal = ({
         onAdd={openAddModal}
         onDelete={openDeleteModal}
         onUpdate={openUpdateModal}
+        showStatus={showStatus}
+        title={title}
       />
 
       <Modal

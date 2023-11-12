@@ -43,6 +43,8 @@ export type TableProps = {
   columns: ColumnProp[];
   data: any;
   filterKey?: "name";
+  showStatus?: boolean;
+  title: string;
   onAdd?: () => void;
   onDelete: (item: any) => void;
   onUpdate: (item: any) => void;
@@ -58,6 +60,8 @@ export const Table = ({
   columns,
   data,
   filterKey = "name",
+  showStatus = false,
+  title,
   onAdd,
   onDelete,
   onUpdate,
@@ -173,7 +177,7 @@ export const Table = ({
         case "actions":
           return (
             <div className="flex gap-2 p-3">
-              <Tooltip color="success" content="Edit category">
+              <Tooltip color="success" content={`Edit ${title}`}>
                 <span className="text-lg cursor-pointer text-danger active:opacity-50">
                   <EditIcon
                     size={20}
@@ -182,7 +186,7 @@ export const Table = ({
                   />
                 </span>
               </Tooltip>
-              <Tooltip color="danger" content="Delete category">
+              <Tooltip color="danger" content={`Delete ${title}`}>
                 <span className="text-lg cursor-pointer text-danger active:opacity-50">
                   <TrashIcon size={20} onClick={() => onDelete(item)} />
                 </span>
@@ -210,28 +214,32 @@ export const Table = ({
             placeholder="Search by name..."
           />
           <div className="flex gap-3">
-            <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button endContent={<ChevronDownIcon className="text-small" />}>
-                  Status
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={statusFilter}
-                selectionMode="multiple"
-                // @ts-ignore:next-line
-                onSelectionChange={setStatusFilter}
-              >
-                {statusOptions.map((status) => (
-                  <DropdownItem key={status.key} className="capitalize">
-                    {_.capitalize(status.name)}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
+            {showStatus && (
+              <Dropdown>
+                <DropdownTrigger className="hidden sm:flex">
+                  <Button
+                    endContent={<ChevronDownIcon className="text-small" />}
+                  >
+                    Status
+                  </Button>
+                </DropdownTrigger>
+                <DropdownMenu
+                  disallowEmptySelection
+                  aria-label="Table Columns"
+                  closeOnSelect={false}
+                  selectedKeys={statusFilter}
+                  selectionMode="multiple"
+                  // @ts-ignore:next-line
+                  onSelectionChange={setStatusFilter}
+                >
+                  {statusOptions.map((status) => (
+                    <DropdownItem key={status.key} className="capitalize">
+                      {_.capitalize(status.name)}
+                    </DropdownItem>
+                  ))}
+                </DropdownMenu>
+              </Dropdown>
+            )}
 
             <Dropdown>
               <DropdownTrigger className="hidden sm:flex">
