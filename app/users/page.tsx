@@ -1,15 +1,19 @@
 "use client";
 
-// React Dependencies
-import React, { useCallback } from "react";
+// React & Next Dependencies
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+
+// External Dependencoes
+import _ from "lodash";
+import { useDisclosure } from "@nextui-org/modal";
 
 // Internal Dependencies
-import _ from "lodash";
-import { TableWithModal } from "@/components/table/TableWithModal";
+import { Table } from "@/components/table/Table";
 import { usersData } from "@/db/users";
-import { ColumnProp } from "@/types";
+import { ColumnProp, UserProps, UsersProps } from "@/types";
 import { convertColumnKeysIntoObject } from "@/utils/convert";
-import { UserProps } from "@nextui-org/react";
+import { Modal } from "@/components/modal/Modal";
 
 const initialVisibleColumns = ["id", "name", "email", "actions"];
 const columns: ColumnProp[] = convertColumnKeysIntoObject(
@@ -17,67 +21,60 @@ const columns: ColumnProp[] = convertColumnKeysIntoObject(
 );
 
 export default function Users() {
-  const addUserContent = useCallback(() => {
-    return (
-      <div>
-        <p>This is the ADD user modl!</p>
-      </div>
-    );
+  const router = useRouter();
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
+  const [loading, setLoading] = useState(true);
+  const [users, setUsers] = useState<UsersProps>([]);
+  const [user, setUser] = useState<UserProps | null>(null);
+
+  const deleteUserHandler = async () => {
+    try {
+      console.log(user);
+    } catch (err) {
+      console.log("Users page, error in deleteUserHandler: ", err);
+    }
+  };
+
+  useEffect(() => {
+    const getUsers = async () => {
+      try {
+        setUsers(usersData);
+      } catch (err) {
+        console.log("Users page, error in getUsers: ", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getUsers();
   }, []);
-
-  const updateUserContent = useCallback((user: UserProps) => {
-    return (
-      <div>
-        <p>This is the UPDATE user modal `{user.id}`</p>
-      </div>
-    );
-  }, []);
-
-  const deleteUserContent = useCallback(
-    (user: UserProps) => (
-      <div>
-        <p>Are you sure you want to delete user with ID `{user.id}`?</p>
-      </div>
-    ),
-    []
-  );
-
-  const onAddUser = async () => {
-    try {
-      console.log("onAddUser called!");
-    } catch (err) {
-      console.log("Error in onAddUser: ", err);
-    }
-  };
-
-  const onUpdateUser = async (user: UserProps) => {
-    try {
-      console.log("onUpdateUser: ", user);
-    } catch (err) {
-      console.log("Error in onUpdateUser: ", err);
-    }
-  };
-
-  const onDeleteUser = async (user: UserProps) => {
-    try {
-      console.log("onDeleteUser: ", user);
-    } catch (err) {
-      console.log("Error in onDeleteUser: ", err);
-    }
-  };
 
   return (
-    <TableWithModal
-      title="User"
-      initialVisibleColumns={initialVisibleColumns}
-      columns={columns}
-      data={usersData}
-      modalAddContent={addUserContent}
-      modalUpdateContent={updateUserContent}
-      modalDeleteContent={deleteUserContent}
-      onAdd={onAddUser}
-      onUpdate={onUpdateUser}
-      onDelete={onDeleteUser}
-    />
+    <>
+      <Table
+        title="User"
+        initialVisibleColumns={initialVisibleColumns}
+        columns={columns}
+        data={users}
+        onAdd={() => router.push("/users/user")}
+        onUpdate={() => router.push("/users/user?id=123")}
+        onDelete={(user) => {
+          setUser(user);
+          onOpen();
+        }}
+      />
+
+      <Modal
+        title="Delete User"
+        actionBtnText="Delete"
+        isOpen={isOpen}
+        BodyContent={() => {
+          return <div>Well hello there!</div>;
+        }}
+        onOpenChange={onOpenChange}
+        onAction={deleteUserHandler}
+      />
+    </>
   );
 }

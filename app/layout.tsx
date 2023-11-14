@@ -7,6 +7,8 @@ import { usePathname } from "next/navigation";
 // External Dependencies
 import clsx from "clsx";
 import { Provider as ReduxProvider } from "react-redux";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // Internal Dependencies
 import { siteConfig } from "@/config/site";
@@ -56,11 +58,16 @@ export default function RootLayout({
         <ReduxProvider store={store}>
           <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
             <div className="relative flex h-screen">
-              <Menu className="min-w-1/5" currentMenu={currentMenu} />
-              <main className="w-4/5">{children}</main>
+              <Menu
+                className="hidden min-w-1/5 md:block"
+                currentMenu={currentMenu}
+              />
+              <main className="w-full md:w-4/5">{children}</main>
             </div>
           </Providers>
         </ReduxProvider>
+
+        <ToastContainer />
       </body>
     </html>
   );
