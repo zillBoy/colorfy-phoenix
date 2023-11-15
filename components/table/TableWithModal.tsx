@@ -7,27 +7,28 @@ import { useDisclosure } from "@nextui-org/react";
 // Internal Dependencies
 import { Table } from "@/components/table/Table";
 import { Modal } from "@/components/modal/Modal";
-import { CategoryProps, ModalSizeProp, ColumnProp } from "@/types";
+import { ModalSizeProp, ColumnProp, ItemProps, ItemsProps } from "@/types";
 
 type ModalContentProps = {
   title: string;
   size: ModalSizeProp;
   actionBtnText: string;
-  bodyContent: ReactNode;
-  onAction: (item?: CategoryProps | any) => void;
+  bodyContent: () => React.JSX.Element | null;
+  onAction: (item?: ItemProps) => void;
 };
 
 type TableWithModalProps = {
   title: string;
   initialVisibleColumns: string[];
   columns: ColumnProp[];
-  data: CategoryProps[] | any;
-  modalAddContent: ReactNode;
-  modalUpdateContent: ReactNode;
-  modalDeleteContent: ReactNode;
+  data: ItemsProps;
+  modalAddContent: () => React.JSX.Element;
+  modalUpdateContent: (item?: ItemProps) => React.JSX.Element;
+  modalDeleteContent: (item?: ItemProps) => React.JSX.Element;
+  showStatus?: boolean;
   onAdd: () => void;
-  onUpdate: (item: CategoryProps | any) => void;
-  onDelete: (item: CategoryProps | any) => void;
+  onUpdate: (item: ItemProps) => void;
+  onDelete: (item: ItemProps) => void;
 };
 
 export const TableWithModal = ({
@@ -38,6 +39,7 @@ export const TableWithModal = ({
   modalAddContent,
   modalUpdateContent,
   modalDeleteContent,
+  showStatus = false,
   onAdd,
   onUpdate,
   onDelete,
@@ -47,7 +49,7 @@ export const TableWithModal = ({
     title: "",
     size: "md",
     actionBtnText: "",
-    bodyContent: null,
+    bodyContent: () => null,
     onAction: () => {},
   });
 
@@ -56,31 +58,31 @@ export const TableWithModal = ({
       title: `Add ${title}`,
       size: "3xl",
       actionBtnText: "Add",
-      bodyContent: modalAddContent,
+      bodyContent: () => modalAddContent(),
       onAction: onAdd,
     });
 
     onOpen();
   };
 
-  const openUpdateModal = (item: CategoryProps | any) => {
+  const openUpdateModal = (item: ItemProps) => {
     setModalContent({
       title: `Update ${title}`,
       size: "3xl",
       actionBtnText: "Update",
-      bodyContent: modalUpdateContent,
+      bodyContent: () => modalUpdateContent(item),
       onAction: () => onUpdate(item),
     });
 
     onOpen();
   };
 
-  const openDeleteModal = (item: CategoryProps | any) => {
+  const openDeleteModal = (item: ItemProps) => {
     setModalContent({
       title: `Delete ${title}`,
       size: "2xl",
       actionBtnText: "Delete",
-      bodyContent: modalDeleteContent,
+      bodyContent: () => modalDeleteContent(item),
       onAction: () => onDelete(item),
     });
 
@@ -96,13 +98,15 @@ export const TableWithModal = ({
         onAdd={openAddModal}
         onDelete={openDeleteModal}
         onUpdate={openUpdateModal}
+        showStatus={showStatus}
+        title={title}
       />
 
       <Modal
         title={modalContent.title}
         actionBtnText={modalContent.actionBtnText}
         isOpen={isOpen}
-        bodyContent={modalContent.bodyContent}
+        BodyContent={modalContent.bodyContent}
         size={modalContent.size}
         onOpenChange={onOpenChange}
         onAction={modalContent.onAction}

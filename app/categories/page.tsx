@@ -1,39 +1,21 @@
 "use client";
 
 // React Dependencies
-import React, { useMemo } from "react";
+import React, { useCallback } from "react";
 
 // Internal Dependencies
 import { TableWithModal } from "@/components/table/TableWithModal";
 import { categoriesData } from "@/db/categories";
 import { CategoryProps, ColumnProp } from "@/types";
+import { convertColumnKeysIntoObject } from "@/utils/convert";
 
 const initialVisibleColumns = ["id", "name", "position", "status", "actions"];
-const columns: ColumnProp[] = [
-  {
-    key: "id",
-    label: "ID",
-  },
-  {
-    key: "name",
-    label: "NAME",
-  },
-  {
-    key: "position",
-    label: "POSITION",
-  },
-  {
-    key: "status",
-    label: "STATUS",
-  },
-  {
-    key: "actions",
-    label: "ACTIONS",
-  },
-];
+const columns: ColumnProp[] = convertColumnKeysIntoObject(
+  initialVisibleColumns
+);
 
 export default function Categories() {
-  const addCategoryContent = useMemo(() => {
+  const addCategoryContent = useCallback(() => {
     return (
       <div>
         <p>This is the add category modal!</p>
@@ -41,7 +23,7 @@ export default function Categories() {
     );
   }, []);
 
-  const updateCategoryContent = useMemo(() => {
+  const updateCategoryContent = useCallback(() => {
     return (
       <div>
         <p>This is the UPDATE category modal!</p>
@@ -49,7 +31,7 @@ export default function Categories() {
     );
   }, []);
 
-  const deleteCategoryContent = useMemo(() => {
+  const deleteCategoryContent = useCallback(() => {
     return (
       <div>
         <p>Delete - Category</p>
@@ -93,6 +75,7 @@ export default function Categories() {
       onAdd={onAddCategory}
       onUpdate={onUpdateCategory}
       onDelete={onDeleteCategory}
+      showStatus
     />
   );
 }

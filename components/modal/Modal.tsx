@@ -18,7 +18,7 @@ export type ModalProps = {
   title: string;
   actionBtnText: string;
   isOpen: boolean;
-  bodyContent: ReactNode;
+  BodyContent: () => React.JSX.Element | null;
   size?: ModalSizeProp;
   onOpenChange: () => void;
   onAction: () => void;
@@ -28,7 +28,7 @@ export const Modal = ({
   title,
   actionBtnText,
   isOpen,
-  bodyContent,
+  BodyContent,
   size = "md",
   onOpenChange,
   onAction,
@@ -49,7 +49,9 @@ export const Modal = ({
           {(onClose: any) => (
             <>
               <ModalHeader className="flex flex-col gap-1">{title}</ModalHeader>
-              <ModalBody>{bodyContent}</ModalBody>
+              <ModalBody>
+                <BodyContent />
+              </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="light" onPress={onClose}>
                   Close
