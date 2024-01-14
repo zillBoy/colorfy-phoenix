@@ -33,7 +33,7 @@ export type CategoryProps = {
   id: string;
   name: string;
   position: number;
-  status: StatusProps;
+  status: StatusProps | string;
   createdAt: string;
   updatedAt: string;
 };
