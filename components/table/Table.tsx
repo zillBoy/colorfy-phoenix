@@ -32,6 +32,7 @@ import {
 // Internal Dependencies
 import Chip from "@/components/chip/Chip";
 import { StatusProps } from "@/types";
+import { statusOptions } from "@/utils/constants";
 
 type ColumnProp = {
   key: string;
@@ -49,11 +50,6 @@ export type TableProps = {
   onDelete: (item: any) => void;
   onUpdate: (item: any) => void;
 };
-
-const statusOptions = [
-  { name: "Published", key: "Published" },
-  { name: "Inactive", key: "Inactive" },
-];
 
 export const Table = ({
   initialVisibleColumns,
