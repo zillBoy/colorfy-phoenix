@@ -1,13 +1,21 @@
 "use client";
 
 // React Dependencies
-import React, { useCallback } from "react";
+import React, { useState, useEffect, SetStateAction } from "react";
+
+// External Dependencies
+import { useDisclosure } from "@nextui-org/react";
+import { ClipLoader } from "react-spinners";
 
 // Internal Dependencies
-import { TableWithModal } from "@/components/table/TableWithModal";
-import { categoriesData } from "@/db/categories";
-import { CategoryProps, ColumnProp } from "@/types";
+import { Table } from "@/components/table/Table";
+import { Modal } from "@/components/modal/Modal";
+import { CategoriesProps, CategoryProps, ColumnProp } from "@/types";
 import { convertColumnKeysIntoObject } from "@/utils/convert";
+import apiService from "@/services/apiService";
+import { COLORS } from "@/styles/style";
+import { statusOptions } from "@/utils/constants";
+import { CategoryForm } from "./CategoryForm";
 
 const initialVisibleColumns = ["id", "name", "position", "status", "actions"];
 const columns: ColumnProp[] = convertColumnKeysIntoObject(
@@ -15,41 +23,75 @@ const columns: ColumnProp[] = convertColumnKeysIntoObject(
 );
 
 export default function Categories() {
-  const addCategoryContent = useCallback(() => {
-    return (
-      <div>
-        <p>This is the add category modal!</p>
-      </div>
-    );
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
+  const [loading, setLoading] = useState(true);
+  const [categories, setCategories] = useState<SetStateAction<CategoriesProps>>(
+    []
+  );
+  const [isFormUpdate, setIsFormUpdate] = useState(false);
+
+  const [id, setId] = useState<string>("");
+  const [name, setName] = useState<string>("");
+  const [position, setPosition] = useState<string>("");
+  const [status, setStatus] = useState(statusOptions[1].name); // By default the status is "Inactive"
+
+  const fetchCategoriesHandler = async () => {
+    try {
+      setLoading(true);
+
+      const categories = await apiService.getCategories(10);
+      setCategories(categories);
+    } catch (error) {
+      console.log(
+        "Error in categories/page.tsx fetchCategoriesHandler: ",
+        error
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategoriesHandler();
   }, []);
 
-  const updateCategoryContent = useCallback(() => {
-    return (
-      <div>
-        <p>This is the UPDATE category modal!</p>
-      </div>
-    );
-  }, []);
-
-  const deleteCategoryContent = useCallback(() => {
-    return (
-      <div>
-        <p>Delete - Category</p>
-      </div>
-    );
-  }, []);
+  const resetCategory = () => {
+    setId("");
+    setName("");
+    setPosition("");
+    setStatus("");
+  };
 
   const onAddCategory = async () => {
     try {
-      console.log("onAddCategory called!: ");
+      const payload = {
+        name,
+        position: Number(position),
+        status,
+        createdAt: new Date().getTime().toString(),
+        updatedAt: new Date().getTime().toString(),
+      };
+
+      const id = await apiService.postCategory(payload);
+      resetCategory();
+
+      setCategories((category) => [...category, { id, ...payload }]);
     } catch (err) {
       console.log("Error in onAddCategory: ", err);
     }
   };
 
-  const onUpdateCategory = async (item: CategoryProps) => {
+  const onUpdateCategory = async () => {
     try {
-      console.log("onUpdateCategory called!: ", item);
+      const payload = {
+        id,
+        name,
+        position,
+        status,
+      };
+
+      console.log("onUpdate:payload:  ", payload);
     } catch (err) {
       console.log("Error in onUpdateCategory: ", err);
     }
@@ -63,19 +105,56 @@ export default function Categories() {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <ClipLoader size={48} color={COLORS.PRIMARY} />
+      </div>
+    );
+  }
+
   return (
-    <TableWithModal
-      title="Category"
-      initialVisibleColumns={initialVisibleColumns}
-      columns={columns}
-      data={categoriesData}
-      modalAddContent={addCategoryContent}
-      modalUpdateContent={updateCategoryContent}
-      modalDeleteContent={deleteCategoryContent}
-      onAdd={onAddCategory}
-      onUpdate={onUpdateCategory}
-      onDelete={onDeleteCategory}
-      showStatus
-    />
+    <>
+      <Table
+        title="User"
+        initialVisibleColumns={initialVisibleColumns}
+        columns={columns}
+        data={categories}
+        onAdd={() => {
+          setIsFormUpdate(false);
+          onOpen();
+        }}
+        onUpdate={() => {
+          setIsFormUpdate(true);
+          onOpen();
+        }}
+        onDelete={(user) => {
+          // setUser(user);
+          // onOpen();
+        }}
+        showStatus
+      />
+
+      <Modal
+        title="Add Category"
+        actionBtnText="Add"
+        isOpen={isOpen}
+        size={"3xl"}
+        onOpenChange={onOpenChange}
+        onAction={isFormUpdate ? onUpdateCategory : onAddCategory}
+      >
+        <CategoryForm
+          id={id}
+          name={name}
+          position={position}
+          status={status}
+          setId={setId}
+          setName={setName}
+          setPosition={setPosition}
+          setStatus={setStatus}
+          isFormUpdate={isFormUpdate}
+        />
+      </Modal>
+    </>
   );
 }

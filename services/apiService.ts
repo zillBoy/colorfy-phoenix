@@ -1,9 +1,16 @@
 // External Dependencies
-import { query, collection, getDocs, limit } from "firebase/firestore";
+import {
+  query,
+  collection,
+  getDocs,
+  limit,
+  doc,
+  setDoc,
+} from "firebase/firestore";
 
 // Internal Dependencies
 import { firestore } from "@/firebase";
-import { CategoriesProps } from "@/types";
+import { CategoriesProps, CategoryProps } from "@/types";
 
 /************************
  *      CATEGORIES      *
@@ -29,9 +36,23 @@ const getCategory = async () => {
   }
 };
 
-const postCategory = async () => {
+const postCategory = async (category: Omit<CategoryProps, "id">) => {
   try {
-    // ...
+    const newDocRef = doc(collection(firestore, "categories"));
+
+    // Get the auto-generated ID
+    const newDocId = newDocRef.id;
+
+    await setDoc(newDocRef, {
+      id: newDocId,
+      name: category.name,
+      position: category.position,
+      status: category.status,
+      createdAt: category.createdAt,
+      updatedAt: category.updatedAt,
+    });
+
+    return newDocId;
   } catch (error) {
     console.log("Error apiService.postCategory: ", error);
   }
