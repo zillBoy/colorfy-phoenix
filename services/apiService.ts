@@ -6,6 +6,7 @@ import {
   limit,
   doc,
   setDoc,
+  updateDoc,
   deleteDoc,
 } from "firebase/firestore";
 
@@ -59,9 +60,19 @@ const postCategory = async (category: Omit<CategoryProps, "id">) => {
   }
 };
 
-const putCategory = async () => {
+const putCategory = async (category: Omit<CategoryProps, "createdAt">) => {
   try {
-    // ...
+    // Reference to the document
+    const docRef = doc(firestore, "categories", category.id);
+
+    await updateDoc(docRef, {
+      name: category.name,
+      position: category.position,
+      status: category.status,
+      updatedAt: category.updatedAt,
+    });
+
+    return category;
   } catch (error) {
     console.log("Error apiService.putCategory: ", error);
   }

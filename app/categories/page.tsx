@@ -30,7 +30,6 @@ export default function Categories() {
   const [categories, setCategories] = useState<SetStateAction<CategoriesProps>>(
     []
   );
-  const [category, setCategory] = useState<CategoryProps | null>(null);
   const [modalType, setModalType] = useState<string>();
 
   const [id, setId] = useState<string>("");
@@ -43,7 +42,7 @@ export default function Categories() {
       setLoading(true);
 
       const categories = await apiService.getCategories(10);
-      setCategories(categories);
+      setCategories(categories ? categories : []);
     } catch (error) {
       console.log(
         "Error in categories/page.tsx fetchCategoriesHandler: ",
@@ -89,11 +88,28 @@ export default function Categories() {
       const payload = {
         id,
         name,
-        position,
+        position: Number(position),
         status,
+        updatedAt: new Date().getTime().toString(),
       };
 
-      console.log("onUpdate:payload:  ", payload);
+      await apiService.putCategory(payload);
+      resetCategory();
+
+      const newCategories: CategoriesProps = [];
+
+      _.forEach(categories, (category: CategoryProps) => {
+        if (category.id === payload.id) {
+          category.name = payload.name;
+          category.position = payload.position;
+          category.status = payload.status;
+          category.updatedAt = payload.updatedAt;
+        }
+
+        newCategories.push(category);
+      });
+
+      setCategories(_.cloneDeep(newCategories));
     } catch (err) {
       console.log("Error in onUpdateCategory: ", err);
     }
@@ -101,16 +117,14 @@ export default function Categories() {
 
   const onDeleteCategory = async () => {
     try {
-      if (!_.isEmpty(category)) {
-        const id = await apiService.deleteCategory(category.id);
-        const filteredCategories = _.filter(
-          categories,
-          (category) => category.id !== id
-        );
-        resetCategory();
+      const categoryId = await apiService.deleteCategory(id);
+      const filteredCategories = _.filter(
+        categories,
+        (category) => category.id !== categoryId
+      );
+      resetCategory();
 
-        setCategories(filteredCategories);
-      }
+      setCategories(filteredCategories);
     } catch (err) {
       console.log("Error in onDeleteCategory: ", err);
     }
@@ -148,12 +162,16 @@ export default function Categories() {
           onOpen();
         }}
         onUpdate={(category) => {
-          setCategory(category);
+          setId(category.id);
+          setName(category.name);
+          setPosition(category.position);
+          setStatus(category.status);
+
           setModalType("Update");
           onOpen();
         }}
         onDelete={(category) => {
-          setCategory(category);
+          setId(category.id);
           setModalType("Delete");
           onOpen();
         }}
@@ -171,21 +189,17 @@ export default function Categories() {
         {modalType === "Delete" ? (
           <div>
             <p>
-              Are you sure you want to delete category with ID{" "}
-              <Code>{category && category.id}</Code>
+              Are you sure you want to delete category with ID <Code>{id}</Code>
             </p>
           </div>
         ) : (
           <CategoryForm
-            id={id}
             name={name}
             position={position}
             status={status}
-            setId={setId}
             setName={setName}
             setPosition={setPosition}
             setStatus={setStatus}
-            isFormUpdate={modalType === "Update"}
           />
         )}
       </Modal>

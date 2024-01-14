@@ -9,27 +9,21 @@ import { Select, SelectItem } from "@nextui-org/react";
 import { statusOptions } from "@/utils/constants";
 
 export type CategoryFormProps = {
-  id?: string;
   name: string;
   position: string;
   status: string;
-  isFormUpdate: boolean;
-  setId?: (id: string) => void;
   setName: (name: string) => void;
   setPosition: (position: string) => void;
   setStatus: (status: string) => void;
 };
 
 export const CategoryForm = ({
-  id,
   name,
   position,
   status,
-  setId,
   setName,
   setPosition,
   setStatus,
-  isFormUpdate = false,
 }: CategoryFormProps) => {
   return (
     <div>
@@ -49,25 +43,7 @@ export const CategoryForm = ({
           onChange={(e) => setPosition(e.target.value)}
         />
       </div>
-      <div
-        className={`flex items-center justify-center gap-4 mb-4 ${
-          isFormUpdate ? "" : "flex-row-reverse"
-        }`}
-      >
-        {isFormUpdate ? (
-          <Input
-            type="text"
-            label="ID"
-            value={id}
-            onChange={(e) => {
-              if (typeof setId !== "undefined") {
-                setId(e.target.value);
-              }
-            }}
-          />
-        ) : (
-          <div className="w-full" />
-        )}
+      <div className="flex items-center justify-center gap-4 mb-4">
         <Select
           label="Select status"
           value={status}
@@ -79,6 +55,7 @@ export const CategoryForm = ({
             </SelectItem>
           ))}
         </Select>
+        <div className="w-full" />
       </div>
     </div>
   );
