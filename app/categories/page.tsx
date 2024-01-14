@@ -4,7 +4,8 @@
 import React, { useState, useEffect, SetStateAction } from "react";
 
 // External Dependencies
-import { useDisclosure } from "@nextui-org/react";
+import _ from "lodash";
+import { Code, useDisclosure } from "@nextui-org/react";
 import { ClipLoader } from "react-spinners";
 
 // Internal Dependencies
@@ -12,10 +13,10 @@ import { Table } from "@/components/table/Table";
 import { Modal } from "@/components/modal/Modal";
 import { CategoriesProps, CategoryProps, ColumnProp } from "@/types";
 import { convertColumnKeysIntoObject } from "@/utils/convert";
-import apiService from "@/services/apiService";
 import { COLORS } from "@/styles/style";
 import { statusOptions } from "@/utils/constants";
 import { CategoryForm } from "./CategoryForm";
+import apiService from "@/services/apiService";
 
 const initialVisibleColumns = ["id", "name", "position", "status", "actions"];
 const columns: ColumnProp[] = convertColumnKeysIntoObject(
@@ -29,7 +30,8 @@ export default function Categories() {
   const [categories, setCategories] = useState<SetStateAction<CategoriesProps>>(
     []
   );
-  const [isFormUpdate, setIsFormUpdate] = useState(false);
+  const [category, setCategory] = useState<CategoryProps | null>(null);
+  const [modalType, setModalType] = useState<string>();
 
   const [id, setId] = useState<string>("");
   const [name, setName] = useState<string>("");
@@ -97,11 +99,32 @@ export default function Categories() {
     }
   };
 
-  const onDeleteCategory = async (item: CategoryProps) => {
+  const onDeleteCategory = async () => {
     try {
-      console.log("onDeleteCategory called!: ", item);
+      if (!_.isEmpty(category)) {
+        const id = await apiService.deleteCategory(category.id);
+        const filteredCategories = _.filter(
+          categories,
+          (category) => category.id !== id
+        );
+        resetCategory();
+
+        setCategories(filteredCategories);
+      }
     } catch (err) {
       console.log("Error in onDeleteCategory: ", err);
+    }
+  };
+
+  const onModalAction = (modalType: string) => {
+    if (modalType === "Add") {
+      return onAddCategory();
+    } else if (modalType === "Update") {
+      return onUpdateCategory();
+    } else if (modalType === "Delete") {
+      return onDeleteCategory();
+    } else {
+      return;
     }
   };
 
@@ -116,44 +139,55 @@ export default function Categories() {
   return (
     <>
       <Table
-        title="User"
+        title="Category"
         initialVisibleColumns={initialVisibleColumns}
         columns={columns}
         data={categories}
         onAdd={() => {
-          setIsFormUpdate(false);
+          setModalType("Add");
           onOpen();
         }}
-        onUpdate={() => {
-          setIsFormUpdate(true);
+        onUpdate={(category) => {
+          setCategory(category);
+          setModalType("Update");
           onOpen();
         }}
-        onDelete={(user) => {
-          // setUser(user);
-          // onOpen();
+        onDelete={(category) => {
+          setCategory(category);
+          setModalType("Delete");
+          onOpen();
         }}
         showStatus
       />
 
       <Modal
-        title="Add Category"
-        actionBtnText="Add"
+        title={`${modalType} Category`}
+        actionBtnText={modalType!}
         isOpen={isOpen}
-        size={"3xl"}
+        size="3xl"
         onOpenChange={onOpenChange}
-        onAction={isFormUpdate ? onUpdateCategory : onAddCategory}
+        onAction={() => onModalAction(modalType!)}
       >
-        <CategoryForm
-          id={id}
-          name={name}
-          position={position}
-          status={status}
-          setId={setId}
-          setName={setName}
-          setPosition={setPosition}
-          setStatus={setStatus}
-          isFormUpdate={isFormUpdate}
-        />
+        {modalType === "Delete" ? (
+          <div>
+            <p>
+              Are you sure you want to delete category with ID{" "}
+              <Code>{category && category.id}</Code>
+            </p>
+          </div>
+        ) : (
+          <CategoryForm
+            id={id}
+            name={name}
+            position={position}
+            status={status}
+            setId={setId}
+            setName={setName}
+            setPosition={setPosition}
+            setStatus={setStatus}
+            isFormUpdate={modalType === "Update"}
+          />
+        )}
       </Modal>
     </>
   );

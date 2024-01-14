@@ -6,6 +6,7 @@ import {
   limit,
   doc,
   setDoc,
+  deleteDoc,
 } from "firebase/firestore";
 
 // Internal Dependencies
@@ -66,9 +67,13 @@ const putCategory = async () => {
   }
 };
 
-const deleteCategory = async () => {
+const deleteCategory = async (categoryId: string) => {
   try {
-    // ...
+    // Reference to the document
+    const docRef = doc(firestore, "categories", categoryId);
+    await deleteDoc(docRef);
+
+    return categoryId;
   } catch (error) {
     console.log("Error apiService.deleteCategory: ", error);
   }
