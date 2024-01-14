@@ -35,3 +35,8 @@ export const menuItems: MenuItemProps[] = [
     Icon: Image,
   },
 ];
+
+export const statusOptions = [
+  { name: "Published", key: "Published" },
+  { name: "Inactive", key: "Inactive" },
+];
