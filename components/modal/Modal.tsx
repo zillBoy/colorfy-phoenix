@@ -1,7 +1,8 @@
 // React Dependencies
-import React, { ReactNode } from "react";
+import React, { ReactElement } from "react";
 
 // External Dependencies
+import _ from "lodash";
 import {
   Modal as NModal,
   ModalContent,
@@ -18,20 +19,20 @@ export type ModalProps = {
   title: string;
   actionBtnText: string;
   isOpen: boolean;
-  BodyContent: () => React.JSX.Element | null;
   size?: ModalSizeProp;
   onOpenChange: () => void;
   onAction: () => void;
+  children?: Element | ReactElement<any, any> | null;
 };
 
 export const Modal = ({
   title,
   actionBtnText,
   isOpen,
-  BodyContent,
   size = "md",
   onOpenChange,
   onAction,
+  children,
 }: ModalProps) => {
   const onActionHandler = async (onClose: () => void) => {
     try {
@@ -49,9 +50,7 @@ export const Modal = ({
           {(onClose: any) => (
             <>
               <ModalHeader className="flex flex-col gap-1">{title}</ModalHeader>
-              <ModalBody>
-                <BodyContent />
-              </ModalBody>
+              <ModalBody>{!_.isEmpty(children) ? children : null}</ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="light" onPress={onClose}>
                   Close

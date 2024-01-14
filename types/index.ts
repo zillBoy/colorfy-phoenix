@@ -30,10 +30,12 @@ export type ColumnProp = {
 /**************************/
 
 export type CategoryProps = {
-  id: string | number;
+  id: string;
   name: string;
   position: number;
-  status: StatusProps;
+  status: StatusProps | string;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type CategoriesProps = CategoryProps[];
